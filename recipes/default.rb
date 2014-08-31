@@ -6,3 +6,11 @@
 #
 # All rights reserved - Do Not Redistribute
 #
+
+include_recipe 'yum-epel::default'
+
+package 'znc'
+
+service 'znc' do
+  action :enable
+end

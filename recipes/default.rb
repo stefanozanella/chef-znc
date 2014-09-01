@@ -14,3 +14,7 @@ package 'znc'
 service 'znc' do
   action :enable
 end
+
+template "/var/lib/znc/.znc/configs/znc.conf" do
+  source "znc.conf.erb"
+end

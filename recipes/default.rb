@@ -15,6 +15,10 @@ service 'znc' do
   action :enable
 end
 
+directory "/var/lib/znc/.znc/configs" do
+  recursive true
+end
+
 template "/var/lib/znc/.znc/configs/znc.conf" do
   source "znc.conf.erb"
 end

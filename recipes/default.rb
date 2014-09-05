@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+raise unless node['znc']['user']
+
 include_recipe 'yum-epel::default'
 
 package 'znc'
@@ -24,6 +26,7 @@ template "#{config_dir}/znc.conf" do
   group 'znc'
   source "znc.conf.erb"
   variables({
+    port: node['znc']['port'],
     user: node['znc']['user'],
   })
 end

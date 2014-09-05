@@ -16,26 +16,28 @@ describe "znc::default" do
   end
 
   describe "the main config file" do
+    let(:config_file) { '/var/lib/znc/.znc/configs/znc.conf' }
+
     it "is installed" do
-      expect(chef_run).to create_template('/var/lib/znc/.znc/configs/znc.conf').with(
+      expect(chef_run).to create_template(config_file).with(
         user: 'znc',
         group: 'znc'
       )
     end
 
     it "contains the mandatory stanzas" do
-      expect(chef_run).to render_file('/var/lib/znc/.znc/configs/znc.conf')
+      expect(chef_run).to render_file(config_file)
         .with_content(%r{^Version = 1.4$})
         .with_content(%r{<Listener \S*>[\S\s]*</Listener>})
     end
 
     it "contains the default options" do
-      expect(chef_run).to render_file('/var/lib/znc/.znc/configs/znc.conf')
+      expect(chef_run).to render_file(config_file)
         .with_content(%r{Port = 1025})
     end
 
     it "configures the `user` stanza" do
-      expect(chef_run).to render_file('/var/lib/znc/.znc/configs/znc.conf')
+      expect(chef_run).to render_file(config_file)
         .with_content(%r{<User test_user>[\S\s]*</User>})
         .with_content(%r{<Pass password>[\S\s]*</Pass>})
         .with_content(%r{Method = SHA256+})

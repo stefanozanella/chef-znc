@@ -11,16 +11,20 @@ include_recipe 'yum-epel::default'
 
 package 'znc'
 
-service 'znc' do
-  action :enable
-end
-
 config_dir = "/var/lib/znc/.znc/configs"
 
 directory config_dir do
+  user 'znc'
+  group 'znc'
   recursive true
 end
 
 template "#{config_dir}/znc.conf" do
+  user 'znc'
+  group 'znc'
   source "znc.conf.erb"
+end
+
+service 'znc' do
+  action :enable
 end

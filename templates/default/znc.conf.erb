@@ -3,3 +3,11 @@ Version = 1.4
 <Listener l>
   Port = 1025
 </Listener>
+
+<User <%= @user %>>
+  <Pass password>
+    Method = SHA256
+    Salt = 123456678901234567890
+    Hash = 12345678901234567890123456789012
+  </Pass>
+</User>

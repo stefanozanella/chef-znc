@@ -23,8 +23,11 @@ template "#{config_dir}/znc.conf" do
   user 'znc'
   group 'znc'
   source "znc.conf.erb"
+  variables({
+    user: node['znc']['user'],
+  })
 end
 
 service 'znc' do
-  action :enable
+  action [:enable, :start]
 end

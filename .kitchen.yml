@@ -15,3 +15,5 @@ suites:
     run_list:
       - recipe[znc::default]
     attributes:
+      znc:
+        user: "test_user"

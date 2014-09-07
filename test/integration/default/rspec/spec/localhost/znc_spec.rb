@@ -1,10 +1,4 @@
-require 'serverspec'
-
-# See https://tickets.opscode.com/browse/CHEF-3304
-Encoding.default_external = Encoding::UTF_8
-
-include Serverspec::Helper::Exec
-include Serverspec::Helper::DetectOS
+require 'spec_helper'
 
 describe "ZNC" do
   it "it is running as a service" do

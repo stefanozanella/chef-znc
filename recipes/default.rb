@@ -33,4 +33,6 @@ end
 
 service 'znc' do
   action [:enable, :start]
+  supports restart: true
+  subscribes :restart, "template[#{config_dir}/znc.conf]", :immediately
 end

@@ -17,3 +17,5 @@ suites:
     attributes:
       znc:
         user: "test_user"
+        pass: "test_pass"
+        port: 5432

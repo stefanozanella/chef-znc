@@ -1,9 +1,16 @@
 require 'spec_helper'
 
 describe "znc::default" do
+  let(:nick)        { "test_user" }
+  let(:salt)        { "12345678901234567890" }
+  let(:pass)        { "test_pass" }
+  let(:hashed_pass) { Digest::SHA256.new.hexdigest "#{pass}#{salt}" }
+
   let(:chef_run) do
     ChefSpec::Runner.new do |node|
-      node.set['znc']['user'] = 'test_user'
+      node.set['znc']['user'] = nick
+      node.set['znc']['pass'] = pass
+      node.set['znc']['salt'] = salt
     end.converge described_recipe
   end
 
@@ -38,11 +45,11 @@ describe "znc::default" do
 
     it "configures the `user` stanza" do
       expect(chef_run).to render_file(config_file)
-        .with_content(%r{<User test_user>[\S\s]*</User>})
+        .with_content(%r{<User #{nick}>[\S\s]*</User>})
         .with_content(%r{<Pass password>[\S\s]*</Pass>})
         .with_content(%r{Method = SHA256+})
-        .with_content(%r{Salt = \S{20}})
-        .with_content(%r{Hash = \S{32}})
+        .with_content(%r{Salt = #{salt}})
+        .with_content(%r{Hash = #{hashed_pass}})
     end
   end
 

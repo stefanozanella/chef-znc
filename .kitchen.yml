@@ -18,4 +18,5 @@ suites:
       znc:
         user: "test_user"
         pass: "test_pass"
+        salt: "12345678901234567890"
         port: 5432

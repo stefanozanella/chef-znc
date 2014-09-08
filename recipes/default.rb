@@ -6,6 +6,7 @@
 #
 # All rights reserved - Do Not Redistribute
 #
+::Chef::Resource::Template.send :include, ZNC::Helper
 
 raise unless node['znc']['user']
 
@@ -28,11 +29,13 @@ template "#{config_dir}/znc.conf" do
   variables({
     port: node['znc']['port'],
     user: node['znc']['user'],
+    salt: node['znc']['salt'],
+    pass: hashed_pass(node['znc']['pass'], node['znc']['salt']),
   })
+  notifies :restart, "service[znc]", :immediately
 end
 
 service 'znc' do
   action [:enable, :start]
   supports restart: true
-  subscribes :restart, "template[#{config_dir}/znc.conf]", :immediately
 end

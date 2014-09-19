@@ -6,8 +6,6 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-::Chef::Resource::Template.send :include, ZNC::Helper
-
 raise unless node['znc']['user']
 
 include_recipe 'yum-epel::default'
@@ -22,6 +20,7 @@ directory config_dir do
   recursive true
 end
 
+::Chef::Resource::Template.send :include, ZNC::Helper
 template "#{config_dir}/znc.conf" do
   user 'znc'
   group 'znc'

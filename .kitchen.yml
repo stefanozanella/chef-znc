@@ -16,7 +16,11 @@ suites:
       - recipe[znc::default]
     attributes:
       znc:
-        user: "test_user"
-        pass: "test_pass"
-        salt: "12345678901234567890"
+        users:
+          - nick: "test_user_1"
+            pass: "test_pass_1"
+            salt: "12345678901234567890"
+          - nick: "test_user_2"
+            pass: "test_pass_2"
+            salt: "09876543210987654321"
         port: 5432

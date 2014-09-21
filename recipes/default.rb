@@ -6,7 +6,7 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-raise unless node['znc']['user']
+raise if !node['znc']['users'] || node['znc']['users'].empty?
 
 include_recipe 'yum-epel::default'
 
@@ -21,15 +21,14 @@ directory config_dir do
 end
 
 ::Chef::Resource::Template.send :include, ZNC::Helper
+
 template "#{config_dir}/znc.conf" do
   user 'znc'
   group 'znc'
   source "znc.conf.erb"
   variables({
     port: node['znc']['port'],
-    user: node['znc']['user'],
-    salt: node['znc']['salt'],
-    pass: hashed_pass(node['znc']['pass'], node['znc']['salt']),
+    users: formatted_users_config(node['znc']['users']),
   })
   notifies :restart, "service[znc]", :immediately
 end

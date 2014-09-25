@@ -8,11 +8,20 @@ describe "znc::default" do
   let(:pass)        { "test_pass" }
   let(:hashed_pass) { Digest::SHA256.new.hexdigest "#{pass}#{salt}" }
 
+  let(:irc_network)         { "an_irc_server" }
+  let(:irc_network_server)  { "an.irc.server" }
+  let(:irc_network_port)    { 1234 }
+
   let(:chef_run) do
     ChefSpec::Runner.new do |node|
       node.set['znc']['users'] = [
-        { nick: nick,       pass: pass,         salt: salt },
-        { nick: other_nick, pass: "not_tested", salt: "same" }
+        { nick: nick,         pass: pass,         salt: salt },
+        { nick: other_nick,   pass: "not_tested", salt: "same" },
+
+        { nick: "not_tested", pass: "not_tested", salt: "same",
+          network: {
+            server: irc_network_server,
+            port: irc_network_port } }
       ]
     end.converge described_recipe
   end
@@ -54,6 +63,11 @@ describe "znc::default" do
         .with_content(%r{Salt = #{salt}})
         .with_content(%r{Hash = #{hashed_pass}})
         .with_content(%r{<User #{other_nick}>[\S\s]*</User>})
+    end
+
+    it "configures the `network` stanza" do
+      expect(chef_run).to render_file(config_file)
+        .with_content(%r{<Network an_irc_server>[\S\s]*Server = an.irc.server[\S\s]*1234[\S\s]*</Network>})
     end
   end
 

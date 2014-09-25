@@ -23,4 +23,10 @@ suites:
           - nick: "test_user_2"
             pass: "test_pass_2"
             salt: "09876543210987654321"
+          - nick: "user_with_network"
+            pass: "random_pass"
+            salt: "23456789012345678901"
+            network:
+              server: "irc.freenode.net"
+              port: 6667
         port: 5432

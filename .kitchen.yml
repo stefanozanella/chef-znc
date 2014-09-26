@@ -29,4 +29,11 @@ suites:
             network:
               server: "irc.freenode.net"
               port: 6667
+          - nick: "user_with_network_and_channel"
+            pass: "random_pass"
+            salt: "34567890123456789012"
+            network:
+              server: "irc.freenode.net"
+              port: 6667
+              channel: "#test_chef_znc_channel"
         port: 5432

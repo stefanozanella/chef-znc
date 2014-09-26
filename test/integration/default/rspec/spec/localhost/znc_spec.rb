@@ -25,4 +25,9 @@ describe "ZNC" do
     irc_log = simulate_irc_connection('localhost', port, "user_with_network", "random_pass")
     expect(irc_log).to match %r{welcome to the freenode internet relay chat network}i
   end
+
+  it "automatically joins the channel configured for the user network" do
+    irc_log = simulate_irc_connection('localhost', port, "user_with_network_and_channel", "random_pass")
+    expect(irc_log).to match %r{blabla}i
+  end
 end

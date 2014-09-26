@@ -11,6 +11,7 @@ module ZNC
         name:   network_attributes['server'].gsub('.', '_'),
         server: network_attributes['server'],
         port:   network_attributes['port'],
+        channel: network_attributes['channel'],
       )
     end
 

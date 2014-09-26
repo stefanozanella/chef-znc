@@ -12,6 +12,8 @@ describe "znc::default" do
   let(:irc_network_server)  { "an.irc.server" }
   let(:irc_network_port)    { 1234 }
 
+  let(:irc_channel) { "#test_channel" }
+
   let(:chef_run) do
     ChefSpec::Runner.new do |node|
       node.set['znc']['users'] = [
@@ -21,7 +23,8 @@ describe "znc::default" do
         { nick: "not_tested", pass: "not_tested", salt: "same",
           network: {
             server: irc_network_server,
-            port: irc_network_port } }
+            port: irc_network_port,
+            channel: irc_channel } }
       ]
     end.converge described_recipe
   end
@@ -68,6 +71,16 @@ describe "znc::default" do
     it "configures the `network` stanza" do
       expect(chef_run).to render_file(config_file)
         .with_content(%r{<Network an_irc_server>[\S\s]*Server = an.irc.server[\S\s]*1234[\S\s]*</Network>})
+    end
+
+    it "configures the channel stanza for the network if a channel is provided" do
+      expect(chef_run).to render_file(config_file)
+        .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
+    end
+
+    it "configures the channel stanza for the network if a channel is provided" do
+      expect(chef_run).to render_file(config_file)
+        .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
     end
   end
 

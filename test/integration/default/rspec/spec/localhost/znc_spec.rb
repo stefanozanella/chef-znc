@@ -28,6 +28,6 @@ describe "ZNC" do
 
   it "automatically joins the channel configured for the user network" do
     irc_log = simulate_irc_connection('localhost', port, "user_with_network_and_channel", "random_pass")
-    expect(irc_log).to match %r{blabla}i
+    expect(irc_log).to match %r{#test_chef_znc_channel :End of /NAMES list.}i
   end
 end

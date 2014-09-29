@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module ZNC
   module Helper
     def hashed_pass(pass, salt)

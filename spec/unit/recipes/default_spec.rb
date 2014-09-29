@@ -78,9 +78,22 @@ describe "znc::default" do
         .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
     end
 
-    it "configures the channel stanza for the network if a channel is provided" do
-      expect(chef_run).to render_file(config_file)
-        .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
+    context "when no channel is provided" do
+      let(:chef_run) do
+        ChefSpec::Runner.new do |node|
+          node.set['znc']['users'] = [
+            { nick: "not_tested", pass: "not_tested", salt: "same",
+              network: {
+              server: irc_network_server,
+              port: irc_network_port } }
+          ]
+        end.converge described_recipe
+      end
+
+      it "doesn't configure the channel stanza for the network" do
+        expect(chef_run).to_not render_file(config_file)
+          .with_content(%r{<Chan[\S\s]*>\s*</Chan>})
+      end
     end
   end
 

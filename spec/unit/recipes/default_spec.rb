@@ -1,6 +1,12 @@
 require 'spec_helper'
 
 describe "znc::default" do
+  let(:chef_run) do
+    ChefSpec::Runner.new do |node|
+      node.set['znc']['users'] = znc_users_config
+    end.converge described_recipe
+  end
+
   let(:config_dir)  { "/var/lib/znc/.znc/configs" }
   let(:nick)        { "test_user" }
   let(:other_nick)  { "other_user" }
@@ -8,25 +14,9 @@ describe "znc::default" do
   let(:pass)        { "test_pass" }
   let(:hashed_pass) { Digest::SHA256.new.hexdigest "#{pass}#{salt}" }
 
-  let(:irc_network)         { "an_irc_server" }
-  let(:irc_network_server)  { "an.irc.server" }
-  let(:irc_network_port)    { 1234 }
-
-  let(:irc_channel) { "#test_channel" }
-
-  let(:chef_run) do
-    ChefSpec::Runner.new do |node|
-      node.set['znc']['users'] = [
-        { nick: nick,         pass: pass,         salt: salt },
-        { nick: other_nick,   pass: "not_tested", salt: "same" },
-
-        { nick: "not_tested", pass: "not_tested", salt: "same",
-          network: {
-            server: irc_network_server,
-            port: irc_network_port,
-            channel: irc_channel } }
-      ]
-    end.converge described_recipe
+  let(:znc_users_config) do
+    [ { nick: nick,         pass: pass,         salt: salt },
+      { nick: other_nick,   pass: "not_tested", salt: "same" }, ]
   end
 
   it "creates the directory containing the configuration" do
@@ -68,31 +58,45 @@ describe "znc::default" do
         .with_content(%r{<User #{other_nick}>[\S\s]*</User>})
     end
 
-    it "configures the `network` stanza" do
-      expect(chef_run).to render_file(config_file)
-        .with_content(%r{<Network an_irc_server>[\S\s]*Server = an.irc.server[\S\s]*1234[\S\s]*</Network>})
-    end
+    context "when a network is provided" do
+      let(:irc_network)         { "an_irc_server" }
+      let(:irc_network_server)  { "an.irc.server" }
+      let(:irc_network_port)    { 1234 }
 
-    it "configures the channel stanza for the network if a channel is provided" do
-      expect(chef_run).to render_file(config_file)
-        .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
-    end
-
-    context "when no channel is provided" do
-      let(:chef_run) do
-        ChefSpec::Runner.new do |node|
-          node.set['znc']['users'] = [
-            { nick: "not_tested", pass: "not_tested", salt: "same",
-              network: {
+      let(:znc_users_config) do
+        [ { nick: "not_tested", pass: "not_tested", salt: "same",
+            network: {
               server: irc_network_server,
-              port: irc_network_port } }
-          ]
-        end.converge described_recipe
+              port: irc_network_port } } ]
       end
 
-      it "doesn't configure the channel stanza for the network" do
-        expect(chef_run).to_not render_file(config_file)
-          .with_content(%r{<Chan[\S\s]*>\s*</Chan>})
+      it "configures the `network` stanza" do
+        expect(chef_run).to render_file(config_file)
+          .with_content(%r{<Network #{irc_network}>[\S\s]*Server = #{irc_network_server}[\S\s]*#{irc_network_port}[\S\s]*</Network>})
+      end
+
+      context "when no channel is provided" do
+        it "doesn't configure the channel stanza for the network" do
+          expect(chef_run).to_not render_file(config_file)
+            .with_content(%r{<Chan[\S\s]*>\s*</Chan>})
+        end
+      end
+
+      context "when a channel is provided" do
+        let(:irc_channel) { "#test_channel" }
+
+        let(:znc_users_config) do
+          [ { nick: "not_tested", pass: "not_tested", salt: "same",
+            network: {
+              server: irc_network_server,
+              port: irc_network_port,
+              channel: irc_channel } } ]
+        end
+
+        it "configures the channel stanza for the network" do
+          expect(chef_run).to render_file(config_file)
+            .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
+        end
       end
     end
   end

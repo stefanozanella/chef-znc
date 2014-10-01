@@ -17,17 +17,17 @@ describe "ZNC" do
       { nick: "test_user_2", pass: "test_pass_2" },
     ].each do |user|
       irc_log = simulate_irc_connection('localhost', port, user[:nick], user[:pass])
-      expect(irc_log).to match %r{welcome to znc}i
+      expect(irc_log).to match znc_welcome_message
     end
   end
 
   it "connects the user to its configured network" do
     irc_log = simulate_irc_connection('localhost', port, "user_with_network", "random_pass")
-    expect(irc_log).to match %r{welcome to the freenode internet relay chat network}i
+    expect(irc_log).to match freenode_welcome_message
   end
 
   it "automatically joins the channel configured for the user network" do
     irc_log = simulate_irc_connection('localhost', port, "user_with_network_and_channel", "random_pass")
-    expect(irc_log).to match %r{#test_chef_znc_channel :End of /NAMES list.}i
+    expect(irc_log).to match names_for_channels("#test_chef_znc_channel")
   end
 end

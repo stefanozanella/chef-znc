@@ -82,20 +82,22 @@ describe "znc::default" do
         end
       end
 
-      context "when a channel is provided" do
-        let(:irc_channel) { "#test_channel" }
+      context "when a list of channels is provided" do
+        let(:irc_channels) { [ "#channel_1", "#channel_2" ] }
 
         let(:znc_users_config) do
           [ { nick: "not_tested", pass: "not_tested", salt: "same",
             network: {
               server: irc_network_server,
               port: irc_network_port,
-              channel: irc_channel } } ]
+              channels: irc_channels } } ]
         end
 
-        it "configures the channel stanza for the network" do
-          expect(chef_run).to render_file(config_file)
-            .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
+        it "configures a stanza for each channel" do
+          irc_channels.each do |irc_channel|
+            expect(chef_run).to render_file(config_file)
+              .with_content(%r{<Network an_irc_server>[\S\s]*<Chan #{irc_channel}>\s*</Chan>[\S\s]*</Network>})
+          end
         end
       end
     end

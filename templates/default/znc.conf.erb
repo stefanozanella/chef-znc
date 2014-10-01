@@ -15,9 +15,9 @@ Version = 1.4
 
   <Network <%= user.network.name %>>
     Server = <%= user.network.server %> <%= user.network.port %>
-    <% if user.network.channel -%>
+    <% user.network.channels.each do |channel| -%>
 
-    <Chan <%= user.network.channel %>>
+    <Chan <%= channel %>>
     </Chan>
     <% end -%>
   </Network>

@@ -35,6 +35,6 @@ def freenode_welcome_message
   %r{welcome to the freenode internet relay chat network}i
 end
 
-def names_for_channels(*channels)
-  %r{#{channels.join ' '} :End of /NAMES list.}i
+def join_confirmation_for(channel)
+  %r{#{channel} :End of /NAMES list.}i
 end

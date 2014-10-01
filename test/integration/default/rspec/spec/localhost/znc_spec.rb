@@ -26,8 +26,9 @@ describe "ZNC" do
     expect(irc_log).to match freenode_welcome_message
   end
 
-  it "automatically joins the channel configured for the user network" do
-    irc_log = simulate_irc_connection('localhost', port, "user_with_network_and_channel", "random_pass")
-    expect(irc_log).to match names_for_channels("#test_chef_znc_channel")
+  it "automatically joins all the channels configured for the user network" do
+    irc_log = simulate_irc_connection('localhost', port, "user_with_network_and_channels", "random_pass")
+    expect(irc_log).to match join_confirmation_for("#test_chef_znc_channel_1")
+    expect(irc_log).to match join_confirmation_for("#test_chef_znc_channel_2")
   end
 end

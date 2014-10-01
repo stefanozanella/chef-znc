@@ -28,7 +28,7 @@ template "#{config_dir}/znc.conf" do
   source "znc.conf.erb"
   variables({
     port: node['znc']['port'],
-    users: formatted_users_config(node['znc']['users']),
+    users: users_config(node['znc']['users']),
   })
   notifies :restart, "service[znc]", :immediately
 end

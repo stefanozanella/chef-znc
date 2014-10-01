@@ -6,28 +6,28 @@ module ZNC
       Digest::SHA256.new.hexdigest "#{pass}#{salt}"
     end
 
-    def formatted_channels_config(channel_attributes)
-      channel_attributes || []
+    def channels_config(attrs)
+      attrs || []
     end
 
-    def formatted_network_config(network_attributes)
-      return nil unless network_attributes
+    def network_config(attrs)
+      return nil unless attrs
 
       OpenStruct.new(
-        name:     network_attributes['server'].gsub('.', '_'),
-        server:   network_attributes['server'],
-        port:     network_attributes['port'],
-        channels: formatted_channels_config(network_attributes['channels']),
+        name:     attrs['server'].gsub('.', '_'),
+        server:   attrs['server'],
+        port:     attrs['port'],
+        channels: channels_config(attrs['channels']),
       )
     end
 
-    def formatted_users_config(user_attributes)
+    def users_config(user_attributes)
       user_attributes.map do |u|
         OpenStruct.new(
           nick: u['nick'],
           salt: u['salt'],
           pass: hashed_pass(u['pass'], u['salt']),
-          network: formatted_network_config(u['network']),
+          network: network_config(u['network']),
         )
       end
     end
